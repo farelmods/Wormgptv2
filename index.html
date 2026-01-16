@@ -71,7 +71,7 @@
 
     body {
         margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         background-color: var(--bg-color);
         background-image: var(--gradient);
         color: var(--text-main);
@@ -476,16 +476,19 @@
 
     /* Bot Bubble Style */
     .msg-group.bot .msg-content {
-        background: var(--bot-bubble-bg);
+        background: transparent;
         color: #e5e5e5;
-        border-radius: 4px 20px 20px 20px; /* ChatGPT style corner */
+        border-radius: 0;
+        padding-left: 0;
     }
 
     /* User Bubble Style */
     .msg-group.user .msg-content {
-        background: var(--user-bubble-bg);
+        background: transparent;
         color: white;
-        border-radius: 20px 20px 4px 20px; /* ChatGPT style corner */
+        border-radius: 0;
+        padding-right: 0;
+        text-align: right;
     }
 
     /* Image in Chat */
