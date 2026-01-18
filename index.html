@@ -306,33 +306,56 @@
         flex-direction: column;
     }
 
-    /* --- MODAL & PANEL --- */
+    /* --- MODAL & PANEL (BOTTOM SHEET STYLE) --- */
     .modal-overlay {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.8);
+        background: rgba(0,0,0,0.6);
         z-index: 200;
         display: flex;
         justify-content: center;
-        align-items: center; /* Center vertically for most, but mobile often sheets from bottom */
+        align-items: flex-end; /* Align to bottom */
         opacity: 0;
         visibility: hidden;
-        transition: 0.3s;
-        padding: 20px;
+        transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+        padding: 0;
     }
     .modal-overlay.active { opacity: 1; visibility: visible; }
 
     .modal-content {
         background: #1c1c1e;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 20px;
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
         width: 100%;
-        max-width: 500px;
-        max-height: 80vh;
+        max-width: 600px;
+        max-height: 85vh;
+        min-height: 300px;
         overflow-y: auto;
         padding: 24px;
+        padding-top: 10px;
         position: relative;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-handle {
+        width: 40px;
+        height: 5px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 3px;
+        margin: 0 auto 20px auto;
+        flex-shrink: 0;
     }
 
     .modal-header {
@@ -340,6 +363,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 24px;
+        flex-shrink: 0;
     }
 
     .modal-title {
@@ -349,7 +373,7 @@
     }
 
     .close-modal {
-        background: #333;
+        background: rgba(255,255,255,0.1);
         border: none;
         color: white;
         border-radius: 50%;
@@ -445,12 +469,13 @@
     }
     #chatbox.hidden { display: none; }
 
-    /* --- CHAT BUBBLES (MODERN MOBILE STYLE) --- */
+    /* --- CHAT BUBBLES (ChatGPT Mobile Style) --- */
     .msg-group { 
         display: flex; 
-        gap: 10px;
+        gap: 12px;
         max-width: 100%; 
         animation: slideIn 0.3s ease;
+        padding: 4px 0;
     }
     
     @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -482,17 +507,13 @@
     .bot-avatar img { width: 100%; height: 100%; object-fit: cover; }
     
     .user-avatar { 
-        background: var(--primary-color);
-        color: white;
-        font-weight: 600;
-        font-size: 14px;
-        box-shadow: 0 2px 10px var(--primary-shadow);
+        display: none; /* Hide user avatar for ChatGPT style */
     }
     
     .msg-content {
         font-size: 16px;
         line-height: 1.5;
-        padding: 12px 16px;
+        padding: 10px 16px;
         max-width: 85%;
         word-wrap: break-word;
         overflow-wrap: break-word;
@@ -504,16 +525,21 @@
         background: transparent;
         color: #e5e5e5;
         border-radius: 0;
-        padding-left: 0;
+        padding: 10px 0;
+        padding-top: 4px;
+        max-width: 90%;
     }
 
     /* User Bubble Style */
     .msg-group.user .msg-content {
-        background: transparent;
+        background: var(--user-bubble-bg);
         color: white;
-        border-radius: 0;
-        padding-right: 0;
-        text-align: right;
+        border-radius: 20px;
+        border-top-right-radius: 4px; /* Subtle hint of origin */
+        padding: 10px 16px;
+        text-align: left;
+        max-width: 80%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     /* Image in Chat */
@@ -521,6 +547,82 @@
         max-width: 100%;
         border-radius: 12px;
         margin-top: 8px;
+    }
+
+    /* --- SETTINGS LIST STYLE --- */
+    .settings-group {
+        background: rgba(255,255,255,0.05);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+
+    .settings-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: transparent;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        font-size: 16px;
+    }
+    .settings-item:last-child { border-bottom: none; }
+
+    .settings-label { font-weight: 500; color: #fff; }
+
+    /* iOS Style Toggle */
+    .toggle-switch {
+        position: relative;
+        width: 50px;
+        height: 30px;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #3a3a3c;
+        transition: .4s;
+        border-radius: 34px;
+    }
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    input:checked + .toggle-slider { background-color: var(--success-green); }
+    input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+    /* Select */
+    .settings-select {
+        appearance: none;
+        background: transparent;
+        border: none;
+        color: var(--primary-color);
+        font-size: 16px;
+        text-align: right;
+        padding-right: 0;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .settings-textarea {
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: #ddd;
+        font-size: 15px;
+        padding: 10px 0;
+        resize: vertical;
+        min-height: 80px;
+        font-family: inherit;
     }
 
     /* --- INPUT AREA (FLOATING BAR) --- */
@@ -767,6 +869,7 @@
 <!-- Modal Panels -->
 <div class="modal-overlay" id="searchModal">
     <div class="modal-content">
+        <div class="modal-handle"></div>
         <div class="modal-header">
             <div class="modal-title">Search</div>
             <button class="close-modal" onclick="closeModal('searchModal')">×</button>
@@ -780,6 +883,7 @@
 
 <div class="modal-overlay" id="communityModal">
     <div class="modal-content">
+        <div class="modal-handle"></div>
         <div class="modal-header">
             <div class="modal-title">Community</div>
             <button class="close-modal" onclick="closeModal('communityModal')">×</button>
@@ -790,6 +894,7 @@
 
 <div class="modal-overlay" id="sharedModal">
     <div class="modal-content">
+        <div class="modal-handle"></div>
         <div class="modal-header">
             <div class="modal-title">Shared</div>
             <button class="close-modal" onclick="closeModal('sharedModal')">×</button>
@@ -800,6 +905,7 @@
 
 <div class="modal-overlay" id="notificationsModal">
     <div class="modal-content">
+        <div class="modal-handle"></div>
         <div class="modal-header">
             <div class="modal-title">Notifications</div>
             <button class="close-modal" onclick="closeModal('notificationsModal')">×</button>
@@ -810,6 +916,7 @@
 
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
+        <div class="modal-handle"></div>
         <div class="modal-header">
             <div class="modal-title">Settings</div>
             <button class="close-modal" onclick="closeModal('settingsModal')">×</button>
@@ -820,6 +927,7 @@
 
 <div class="modal-overlay" id="helpModal">
     <div class="modal-content">
+        <div class="modal-handle"></div>
         <div class="modal-header">
             <div class="modal-title">Help</div>
             <button class="close-modal" onclick="closeModal('helpModal')">×</button>
@@ -1236,23 +1344,38 @@ function loadSettings() {
     const settingsDiv = document.getElementById('settingsContent');
     settingsDiv.innerHTML = '';
     
-    // Model Selection
-    const modelDiv = document.createElement('div');
-    modelDiv.className = 'settings-option';
-    modelDiv.innerHTML = `
-        <div class="settings-label">Model</div>
-        <select class="settings-select" onchange="changeModel(this.value)">
-            <option value="wormgpt-v7" ${state.settings.selectedModel === 'wormgpt-v7' ? 'selected' : ''}>WormGPT</option>
-            <option value="gemini-2.5-flash" ${state.settings.selectedModel === 'gemini-2.5-flash' ? 'selected' : ''}>Gemini</option>
-            <option value="grok" ${state.settings.selectedModel === 'grok' ? 'selected' : ''}>Grok</option>
-            <option value="ganarte" ${state.settings.selectedModel === 'ganarte' ? 'selected' : ''}>Ganarte (Image)</option>
-        </select>
-    `;
-    settingsDiv.appendChild(modelDiv);
+    // Group 1: Model & Preferences
+    const group1 = document.createElement('div');
+    group1.className = 'settings-group';
 
-    // System Prompt based on model
-    const promptDiv = document.createElement('div');
-    promptDiv.className = 'settings-block';
+    // Model Selection
+    group1.innerHTML += `
+        <div class="settings-item">
+            <div class="settings-label">Model</div>
+            <select class="settings-select" onchange="changeModel(this.value)">
+                <option value="wormgpt-v7" ${state.settings.selectedModel === 'wormgpt-v7' ? 'selected' : ''}>WormGPT</option>
+                <option value="gemini-2.5-flash" ${state.settings.selectedModel === 'gemini-2.5-flash' ? 'selected' : ''}>Gemini</option>
+                <option value="grok" ${state.settings.selectedModel === 'grok' ? 'selected' : ''}>Grok</option>
+                <option value="ganarte" ${state.settings.selectedModel === 'ganarte' ? 'selected' : ''}>Ganarte (Image)</option>
+            </select>
+        </div>
+    `;
+
+    // Dark Mode
+    group1.innerHTML += `
+        <div class="settings-item">
+            <div class="settings-label">Dark Mode</div>
+            <label class="toggle-switch">
+                <input type="checkbox" ${state.settings.darkMode ? 'checked' : ''} onchange="toggleSetting('darkMode', this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    `;
+    settingsDiv.appendChild(group1);
+
+    // Group 2: System Prompt
+    const group2 = document.createElement('div');
+    group2.className = 'settings-group';
 
     let currentPromptVal = "";
     let promptKey = "";
@@ -1261,32 +1384,23 @@ function loadSettings() {
     else if(state.settings.selectedModel.includes('grok')) { currentPromptVal = state.settings.grokSystemPrompt; promptKey='grok'; }
     else { currentPromptVal = state.settings.ganarteSystemPrompt; promptKey='ganarte'; }
 
-    promptDiv.innerHTML = `
-        <div class="settings-label">System Instruction</div>
-        <textarea class="settings-textarea" onchange="updateSystemPrompt(this.value, '${promptKey}')">${currentPromptVal}</textarea>
+    group2.innerHTML = `
+        <div class="settings-item" style="display:block">
+            <div class="settings-label" style="margin-bottom:10px">System Instruction</div>
+            <textarea class="settings-textarea" onchange="updateSystemPrompt(this.value, '${promptKey}')">${currentPromptVal}</textarea>
+        </div>
     `;
-    settingsDiv.appendChild(promptDiv);
+    settingsDiv.appendChild(group2);
 
-    // Dark Mode
-    const darkModeDiv = document.createElement('div');
-    darkModeDiv.className = 'settings-option';
-    darkModeDiv.innerHTML = `
-        <div class="settings-label">Dark Mode</div>
-        <label class="toggle-switch">
-            <input type="checkbox" ${state.settings.darkMode ? 'checked' : ''} onchange="toggleSetting('darkMode', this.checked)">
-            <span class="toggle-slider"></span>
-        </label>
+    // Group 3: Data Actions
+    const group3 = document.createElement('div');
+    group3.className = 'settings-group';
+    group3.innerHTML = `
+        <div class="settings-item" onclick="clearChatHistory()" style="cursor:pointer">
+            <div class="settings-label" style="color:#ff3b30">Clear History</div>
+        </div>
     `;
-    settingsDiv.appendChild(darkModeDiv);
-    
-    // Clear History
-    const clearDiv = document.createElement('div');
-    clearDiv.className = 'settings-option';
-    clearDiv.innerHTML = `
-        <div class="settings-label" style="color:var(--primary-color)">Clear History</div>
-        <button style="background: #333; color: white; border: none; padding: 6px 12px; border-radius: 6px;" onclick="clearChatHistory()">Clear</button>
-    `;
-    settingsDiv.appendChild(clearDiv);
+    settingsDiv.appendChild(group3);
 }
 
 function updateSystemPrompt(value, modelType) {
