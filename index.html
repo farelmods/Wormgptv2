@@ -1397,9 +1397,14 @@ function loadChat(chatId) {
     if (chat) {
         const chatbox = document.getElementById('chatbox');
         chatbox.innerHTML = '';
+
+        const fragment = document.createDocumentFragment();
         chat.messages.forEach(msg => {
-            appendMsg(msg.sender, msg.content);
+            appendMsg(msg.sender, msg.content, fragment);
         });
+        chatbox.appendChild(fragment);
+        chatbox.scrollTop = chatbox.scrollHeight;
+
         activateChatMode();
         state.currentChatId = chatId;
         showToast(`Loaded chat: ${chat.title || 'Untitled'}`);
@@ -1837,7 +1842,7 @@ function formatMessage(text) {
     return formatted;
 }
 
-function appendMsg(sender, text) {
+function appendMsg(sender, text, targetElement = chatbox) {
     const msgGroup = document.createElement('div');
     msgGroup.className = 'msg-group ' + sender;
 
@@ -1894,8 +1899,11 @@ function appendMsg(sender, text) {
     msgGroup.appendChild(avatar);
     msgGroup.appendChild(content);
 
-    chatbox.appendChild(msgGroup);
-    chatbox.scrollTop = chatbox.scrollHeight;
+    targetElement.appendChild(msgGroup);
+
+    if (targetElement === chatbox) {
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
 }
 async function send() {
     const message = input.value.trim();
