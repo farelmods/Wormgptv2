@@ -983,7 +983,7 @@
             <button class="close-modal" onclick="closeModal('searchModal')">×</button>
         </div>
         <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="Type to search chats..." oninput="searchChats(this.value)">
+            <input type="text" class="search-input" id="searchInput" placeholder="Type to search chats..." oninput="debouncedSearch(this.value)">
         </div>
         <div id="searchResults">
             <!-- Chat history akan muncul di sini -->
@@ -1269,6 +1269,15 @@ const input = document.getElementById('input');
 const heroSection = document.getElementById('heroSection');
 
 // --- UTILITY FUNCTIONS ---
+function debounce(func, delay) {
+    let debounceTimer;
+    return function(...args) {
+        const context = this;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => func.apply(context, args), delay);
+    };
+}
+
 function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
@@ -1367,6 +1376,8 @@ function loadSearchResults() {
         resultsDiv.appendChild(item);
     });
 }
+
+const debouncedSearch = debounce(searchChats, 300);
 
 function searchChats(query) {
     const resultsDiv = document.getElementById('searchResults');
