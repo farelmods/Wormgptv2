@@ -1356,6 +1356,7 @@ function loadSearchResults() {
         resultsDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">No chat history yet</div>';
         return;
     }
+    const fragment = document.createDocumentFragment();
     state.chatHistory.forEach(chat => {
         const item = document.createElement('div');
         item.className = 'chat-history-item';
@@ -1364,8 +1365,9 @@ function loadSearchResults() {
             <div class="chat-title">${chat.title || 'Untitled Chat'}</div>
             <div class="chat-preview">${chat.messages[0]?.content?.substring(0, 50) || 'No content'}...</div>
         `;
-        resultsDiv.appendChild(item);
+        fragment.appendChild(item);
     });
+    resultsDiv.appendChild(fragment);
 }
 
 function searchChats(query) {
@@ -1379,6 +1381,7 @@ function searchChats(query) {
         resultsDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">No results found</div>';
         return;
     }
+    const fragment = document.createDocumentFragment();
     filtered.forEach(chat => {
         const item = document.createElement('div');
         item.className = 'chat-history-item';
@@ -1387,8 +1390,9 @@ function searchChats(query) {
             <div class="chat-title">${chat.title || 'Untitled Chat'}</div>
             <div class="chat-preview">${chat.messages[0]?.content?.substring(0, 50) || 'No content'}...</div>
         `;
-        resultsDiv.appendChild(item);
+        fragment.appendChild(item);
     });
+    resultsDiv.appendChild(fragment);
 }
 
 function loadChat(chatId) {
@@ -1414,6 +1418,7 @@ function openCommunityPanel() {
 function loadCommunityMembers() {
     const listDiv = document.getElementById('communityList');
     listDiv.innerHTML = '';
+    const fragment = document.createDocumentFragment();
     state.communityMembers.forEach(member => {
         const item = document.createElement('div');
         item.className = 'user-item';
@@ -1427,8 +1432,9 @@ function loadCommunityMembers() {
                 <div class="user-status">${member.role} • ${member.status}</div>
             </div>
         `;
-        listDiv.appendChild(item);
+        fragment.appendChild(item);
     });
+    listDiv.appendChild(fragment);
 }
 
 function viewMemberProfile(memberId) {
@@ -1446,6 +1452,7 @@ function openSharedPanel() {
 function loadSharedConversations() {
     const listDiv = document.getElementById('sharedList');
     listDiv.innerHTML = '';
+    const fragment = document.createDocumentFragment();
     state.sharedConversations.forEach(conv => {
         const item = document.createElement('div');
         item.className = 'chat-history-item';
@@ -1455,8 +1462,9 @@ function loadSharedConversations() {
             <div class="chat-preview">Shared by ${conv.owner} • ${conv.date}</div>
             <div style="font-size: 12px; color: #666; margin-top: 4px;">${conv.preview}</div>
         `;
-        listDiv.appendChild(item);
+        fragment.appendChild(item);
     });
+    listDiv.appendChild(fragment);
 }
 
 function openSharedConversation(convId) {
@@ -1474,6 +1482,7 @@ function openNotificationsPanel() {
 function loadNotifications() {
     const listDiv = document.getElementById('notificationsList');
     listDiv.innerHTML = '';
+    const fragment = document.createDocumentFragment();
     state.notifications.forEach(notification => {
         const item = document.createElement('div');
         item.className = 'notification-item';
@@ -1489,8 +1498,9 @@ function loadNotifications() {
         if (!notification.read) {
             item.style.background = 'rgba(255,0,0,0.1)';
         }
-        listDiv.appendChild(item);
+        fragment.appendChild(item);
     });
+    listDiv.appendChild(fragment);
 }
 
 function markAsRead(notificationId) {
