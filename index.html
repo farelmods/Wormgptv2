@@ -1269,6 +1269,43 @@ const input = document.getElementById('input');
 const heroSection = document.getElementById('heroSection');
 
 // --- UTILITY FUNCTIONS ---
+// --- PERFORMANCE OPTIMIZATION: Non-blocking Storage ---
+const safeRequestIdleCallback = window.requestIdleCallback || function(cb) {
+    return setTimeout(() => {
+        const start = Date.now();
+        cb({
+            didTimeout: false,
+            timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
+        });
+    }, 1);
+};
+
+const safeCancelIdleCallback = window.cancelIdleCallback || function(id) {
+    clearTimeout(id);
+};
+
+let saveChatHistoryHandle = null;
+
+function saveChatHistory() {
+    if (!currentUser) return;
+
+    // Cancel pending save (Debounce strategy)
+    if (saveChatHistoryHandle) {
+        safeCancelIdleCallback(saveChatHistoryHandle);
+    }
+
+    // Schedule save when browser is idle to avoid blocking main thread
+    saveChatHistoryHandle = safeRequestIdleCallback(() => {
+        try {
+            const key = getStorageKey('wrmgpt_chat_history');
+            localStorage.setItem(key, JSON.stringify(state.chatHistory));
+        } catch (e) {
+            console.error("Failed to save chat history:", e);
+        }
+        saveChatHistoryHandle = null;
+    }, { timeout: 2000 });
+}
+
 function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
@@ -1937,9 +1974,7 @@ async function send() {
 
     // 1. SIMPAN PESAN USER (CHECKPOINT 1)
     // Menggunakan activeChatId untuk memastikan key yang benar
-    if(currentUser) {
-        localStorage.setItem(getStorageKey('wrmgpt_chat_history'), JSON.stringify(state.chatHistory));
-    }
+    saveChatHistory();
 
     // Loading UI
     const loadingId = 'loading-' + Date.now();
@@ -2091,9 +2126,7 @@ async function send() {
         const chatToUpdate = state.chatHistory.find(c => c.id === activeChatId);
         if (chatToUpdate) {
             chatToUpdate.messages.push({ sender: 'bot', content: botReply });
-            if(currentUser) {
-                localStorage.setItem(getStorageKey('wrmgpt_chat_history'), JSON.stringify(state.chatHistory));
-            }
+            saveChatHistory();
         }
 
     } catch (error) {
