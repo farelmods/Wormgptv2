@@ -1863,6 +1863,20 @@ function appendMsg(sender, text) {
         img.style.marginTop = '10px';
         content.appendChild(img);
 
+        // Fungsi helper untuk fallback
+        const useDirectUrl = () => {
+            console.log('Falling back to direct URL:', imageUrl);
+            img.src = imageUrl;
+            img.alt = "Generated Image";
+            img.onload = () => {
+                chatbox.scrollTop = chatbox.scrollHeight;
+            };
+            img.onerror = () => {
+                img.alt = "Failed to load image.";
+                content.textContent = `Error loading image. URL: ${imageUrl}`;
+            };
+        };
+
         // Ambil gambar sebagai blob untuk melewati masalah Content-Type
         fetch(imageUrl)
             .then(response => {
@@ -1878,11 +1892,14 @@ function appendMsg(sender, text) {
                     URL.revokeObjectURL(objectURL);
                     chatbox.scrollTop = chatbox.scrollHeight;
                 };
+                img.onerror = () => {
+                    URL.revokeObjectURL(objectURL);
+                    useDirectUrl();
+                };
             })
             .catch(error => {
-                console.error('Image fetch error:', error);
-                img.alt = "Failed to load image.";
-                content.textContent = `Error loading image. URL: ${imageUrl}`;
+                console.error('Image fetch error (CORS likely), trying direct URL:', error);
+                useDirectUrl();
             });
 
     } else if (sender === 'bot') {

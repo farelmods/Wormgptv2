@@ -19,6 +19,7 @@ async def main():
     server_thread = None
     try:
         # 1. Start a web server in a separate thread
+        socketserver.TCPServer.allow_reuse_address = True
         httpd = socketserver.TCPServer(("", PORT), Handler)
         server_thread = threading.Thread(target=httpd.serve_forever)
         server_thread.daemon = True
